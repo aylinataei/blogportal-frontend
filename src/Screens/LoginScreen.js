@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Importera useNavigate
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Skapa en instans av useNavigate
 
   const handleLogin = async () => {
     try {
@@ -12,10 +14,10 @@ const LoginScreen = () => {
         password,
       });
 
-
       console.log(response.data); // Visa vad som returneras från backend
 
-
+      // Om inloggningen lyckades, omdirigera användaren till AdminHomeScreen
+      navigate('/AdminHome');
     } catch (error) {
       console.error('Inloggning misslyckades:', error);
     }
