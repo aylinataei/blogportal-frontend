@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Använd Routes istället för Switch
-import LoginScreen from './Screens/LoginScreen';
-import AdminHomeScreen from './Screens/AdminHomeScreen';
+import AdminHomeScreen from './screens/adminHomeScreen';
+import LoginScreen from './screens/loginScreen';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
