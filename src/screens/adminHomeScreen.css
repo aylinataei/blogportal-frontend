@@ -1,15 +1,11 @@
-/* adminHomeScreen.css */
-
-/* Centera innehållet i mitten i toppen av sidan */
 body {
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100vh;
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  /* Anpassa bakgrundsfärgen efter dina preferenser */
+  background-color: #dfd3c8;
+  font-family: 'Poppins', sans-serif;
 }
 
 h1 {
@@ -17,7 +13,10 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Styla inmatningsfältet för e-postadress */
+input {
+  width: 100%;
+}
+
 input[type="email"],
 input[type="text"],
 textarea {
@@ -25,11 +24,10 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 10px;
-  width: 100%;
   max-width: 400px;
+  width: 100%;
 }
 
-/* Styla knapparna */
 button {
   padding: 10px 15px;
   background-color: #3498db;
@@ -39,17 +37,16 @@ button {
   cursor: pointer;
   max-width: 400px;
   margin-bottom: 2rem;
+
 }
 
 button:hover {
   background-color: #2980b9;
-  /* Ändra knappfärg vid hovring */
 }
 
 .container {
   width: 100%;
   padding: 1rem;
-
 }
 
 .container-register {
@@ -69,7 +66,6 @@ button:hover {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  width: 10%;
   max-width: 400px;
 }
 
@@ -94,4 +90,11 @@ button:hover {
 /* Avstånd mellan inläggen */
 .post+.post {
   margin-top: 20px;
+}
+
+.select-role {
+  border: 1px solid #ccc;
+  padding: 0.6rem;
+  margin: 1rem;
+  border-radius: 5px;
 }
