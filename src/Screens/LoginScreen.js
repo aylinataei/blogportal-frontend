@@ -18,8 +18,14 @@ const LoginScreen = () => {
         }
       );
 
-      console.log(response.data);
-      navigate("/AdminHome");
+      const user = response.data;
+
+      // Kontrollera användarens roller och navigera baserat på rollen
+      if (user.roles.includes("ROLE_ADMIN")) {
+        navigate("/AdminHome"); // Användaren är en admin
+      } else {
+        navigate("/UserHome"); // Användaren är en vanlig användare
+      }
     } catch (error) {
       console.error("Inloggning misslyckades:", error);
     }

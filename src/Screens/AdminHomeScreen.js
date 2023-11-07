@@ -10,6 +10,8 @@ const AdminHomeScreen = () => {
   const [posts, setPosts] = useState([]);
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [showInputFields, setShowInputFields] = useState(false);
+  const [users, setUsers] = useState([]);
+
 
   const handleInvite = async () => {
     try {
@@ -59,6 +61,19 @@ const AdminHomeScreen = () => {
   useEffect(() => {
     getPosts();
   }, []);
+
+  useEffect(() => {
+    getPosts();
+    // Hämta alla användare när komponenten laddas
+    axios.get("http://localhost:8080/api/users")
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.error("Något gick fel vid hämtning av användare:", error);
+      });
+  }, []);
+
 
   return (
     <div className="container">
@@ -110,6 +125,15 @@ const AdminHomeScreen = () => {
           </div>
         ))}
       </div>
+      <div>
+        <h2>Alla Användare:</h2>
+        <ul>
+          {users.map((user) => (
+            <li key={user.id}>{user.username} - {user.email}</li>
+          ))}
+        </ul>
+      </div>
+
     </div>
   );
 };

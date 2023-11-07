@@ -5,6 +5,8 @@ import AdminHomeScreen from "./screens/adminHomeScreen";
 import LoginScreen from "./screens/loginScreen";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import PasswordResetPage from "./screens/passwordResetPage";
+import UserHomeScreen from "./screens/userHomeScreen";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -12,7 +14,10 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<LoginScreen />} />
         <Route path="/AdminHome" element={<AdminHomeScreen />} />
+        <Route path="/UserHome" element={<UserHomeScreen />} />
         <Route path="/app" element={<App />} />
+        <Route path="/set-password" element={<PasswordResetPage />}
+        />
       </Routes>
     </Router>
   </React.StrictMode>
