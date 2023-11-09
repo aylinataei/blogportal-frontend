@@ -19,7 +19,8 @@ const LoginScreen = () => {
       );
 
       const user = response.data;
-
+      localStorage.setItem("accessToken", user.accessToken);
+      console.log(user);
 
       if (user.roles.includes("ROLE_ADMIN")) {
         navigate("/AdminHome");

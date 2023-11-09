@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CreateUserWithPassword = () => {
   const [username, setUsername] = useState("");
@@ -11,7 +12,8 @@ const CreateUserWithPassword = () => {
 
   const myUrl = new URL(window.location.toLocaleString()).searchParams;
   const invitationToken = myUrl.get("invitationToken");
-  console.log("token", invitationToken);
+
+  const navigate = useNavigate(); // Lägg till navigationskroken
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -19,7 +21,6 @@ const CreateUserWithPassword = () => {
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
-
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (passwordRegex.test(e.target.value)) {
@@ -36,7 +37,7 @@ const CreateUserWithPassword = () => {
       const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
       if (!passwordRegex.test(password)) {
-        setPasswordError("Password should be at least 8 characters long and contain at least one uppercase letter, one digit, and one special character (@$!%*?&).");
+        setPasswordError("Lösenordet måste vara minst 8 tecken långt och innehålla minst en stor bokstav, en siffra och ett specialtecken (@$!%*?&).");
         return;
       }
 
@@ -50,6 +51,9 @@ const CreateUserWithPassword = () => {
         const newJwtToken = response.data.token;
         setJwtToken(newJwtToken);
         setCreateSuccess(true);
+
+        // Navigera till loginsidan
+        navigate("/"); // Byt ut "/" mot den faktiska sökvägen till din loginsida
       } catch (error) {
         console.error("Något gick fel vid skapandet av användaren:", error);
       }
