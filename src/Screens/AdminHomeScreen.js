@@ -15,7 +15,7 @@ const AdminHomeScreen = () => {
   const [showInputFields, setShowInputFields] = useState(false);
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
-
+  const [invitedUsers, setInvitedUsers] = useState([]);
 
   const handleInvite = async () => {
     try {
@@ -23,6 +23,9 @@ const AdminHomeScreen = () => {
         email,
         selectedRole,
       });
+
+      setInvitedUsers([...invitedUsers, { email, id: Date.now() }]);
+
       setInviteSuccess(true);
       setEmail("");
     } catch (error) {
@@ -141,6 +144,7 @@ const AdminHomeScreen = () => {
   }, []);
 
 
+
   return (
     <div className="container">
       <LogoutButton />
@@ -238,7 +242,23 @@ const AdminHomeScreen = () => {
           <button onClick={handleUpdateUserRole}>Spara roll</button>
         </div>
       )}
-
+      <h4>Inbjudna Användare</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>E-post</th>
+            {/* ... (eventuellt andra kolumner för inbjudna användare) */}
+          </tr>
+        </thead>
+        <tbody>
+          {invitedUsers.map((invitedUser) => (
+            <tr key={invitedUser.id}>
+              <td>{invitedUser.email}</td>
+              {/* ... (eventuellt andra kolumner för inbjudna användare) */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

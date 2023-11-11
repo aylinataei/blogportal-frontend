@@ -2,8 +2,8 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AdminHomeScreen from './screens/adminHomeScreen';
-import LoginScreen from './screens/loginScreen';
+import AdminHomeScreen from './screens/AdminHomeScreen';
+import LoginScreen from './screens/LoginScreen';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import PasswordResetPage from './screens/passwordResetPage';
