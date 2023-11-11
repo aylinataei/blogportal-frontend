@@ -13,6 +13,11 @@ h1 {
   margin-bottom: 20px;
 }
 
+h4 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 input {
   width: 100%;
 }
@@ -37,16 +42,28 @@ button {
   cursor: pointer;
   max-width: 400px;
   margin-bottom: 2rem;
-
 }
 
 button:hover {
   background-color: #2980b9;
 }
 
+.delete-btn {
+  color: white;
+  background-color: darkred;
+  padding: 0px 10px;
+  margin-left: 1rem;
+  font-size: 10px;
+}
+
+ul {
+  font-size: 12px;
+}
+
 .container {
   width: 100%;
   padding: 1rem;
+  display: flex;
 }
 
 .container-register {
@@ -70,21 +87,22 @@ button:hover {
 }
 
 .post {
-  padding: 10px;
+  padding: 20px;
   border: 1px solid #ccc;
   border-radius: 10px;
   margin-bottom: 20px;
-  max-width: 400px;
   background: white;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  width: 50vw;
 }
 
 .post h3 {
   margin-bottom: 5px;
+  font-size: 16px;
 }
 
 .post p {
   margin-bottom: 10px;
+  font-size: 12px;
 }
 
 /* Avstånd mellan inläggen */
@@ -97,4 +115,16 @@ button:hover {
   padding: 0.6rem;
   margin: 1rem;
   border-radius: 5px;
+}
+
+.edit-post {
+  padding: 3px 5px;
+  font-size: xx-small;
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+}
+
+.edit-post:hover {
+  background-color: white;
 }

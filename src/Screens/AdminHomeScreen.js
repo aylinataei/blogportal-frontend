@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./adminHomeScreen.css";
 import LogoutButton from "./logout.js";
-
+import { FaPen, FaTrash } from "react-icons/fa";
 
 const AdminHomeScreen = () => {
   const [email, setEmail] = useState("");
@@ -105,11 +105,13 @@ const AdminHomeScreen = () => {
   const getPosts = async () => {
     try {
       const token = localStorage.getItem("accessToken");
+
       const response = await axios.get("http://localhost:8080/api/getAll", {
         headers: {
           "x-access-token": token,
         },
       });
+
       const sortedPosts = response.data.reverse();
       setPosts(sortedPosts);
     } catch (error) {
@@ -121,15 +123,28 @@ const AdminHomeScreen = () => {
     setShowInputFields(true);
   };
 
+
   const handleEditUserRole = (userId) => {
     setSelectedUserId(userId); // Spara användarens id som har valts
   };
 
 
 
-  useEffect(() => {
-    getPosts();
-  }, []);
+  const handleDeletePost = async (postId) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      await axios.delete(`http://localhost:8080/api/deletePost/${postId}`, {
+        headers: {
+          "x-access-token": token,
+        },
+      });
+
+      getPosts();
+    } catch (error) {
+      console.error("Något gick fel vid borttagning av inlägg:", error);
+    }
+  };
 
   useEffect(() => {
     getPosts();
@@ -142,7 +157,6 @@ const AdminHomeScreen = () => {
         console.error("Något gick fel vid hämtning av användare:", error);
       });
   }, []);
-
 
 
   return (
@@ -165,100 +179,111 @@ const AdminHomeScreen = () => {
             <option value="user">Användare</option>
             <option value="admin">Admin</option>
           </select>
-        </div>
-        <button className="invite-btn" onClick={handleInvite}>
-          Invite
-        </button>
 
-        {inviteSuccess && (
-          <p style={{ color: "green" }}>
-            Inbjudan skickad framgångsrikt via e-post!
-          </p>
-        )}
-      </div>
-      <div>
-        <button onClick={showInputFieldsHandler}>Lägg till inlägg</button>
-      </div>
-      {showInputFields && (
-        <div>
-          <input
-            type="text"
-            placeholder="Titel"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <textarea
-            placeholder="Innehåll"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          ></textarea>
-          <button onClick={handlePost}>Skapa Inlägg</button>
+          <button className="invite-btn" onClick={handleInvite}>
+            Invite
+          </button>
+
+          {inviteSuccess && (
+            <p style={{ color: "green" }}>
+              Inbjudan skickad framgångsrikt via e-post!
+            </p>
+          )}
         </div>
-      )}
-      <div>
-        {posts.map((post) => (
-          <div className="post" key={post.id}>
-            <h3>{post.title}</h3>
-            <p>{post.content}</p>
+        <div>
+          <button onClick={showInputFieldsHandler}>Lägg till inlägg</button>
+        </div>
+        {showInputFields && (
+          <div>
+            <input className="content-title"
+              type="text"
+              placeholder="Titel"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <textarea className="content-field"
+              placeholder="Innehåll"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            ></textarea>
+            <button onClick={handlePost}>Skapa Inlägg</button>
           </div>
-        ))}
-      </div>
-      <div>
-        <h4>Användare</h4>
+        )}
+        <div>
+          {posts.map((post) => (
+            <div className="post" key={post.id}>
+              <h3>{post.title}</h3>
+              <p>{post.content}</p>
+              {/* <button
+                className="edit-post"
+                onClick={() => handleEditPost(post.title, post.content)}
+              >
+                <FaPen />
+              </button> */}
+              <button
+                className="edit-post"
+                onClick={() => handleDeletePost(post.id)}
+              >
+                <FaTrash />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div>
+          <h4>Användare</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Användarnamn</th>
+                <th>E-post</th>
+                <th>Roll</th>
+                <th>Åtgärd</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>{user.roles ? user.roles.join(", ") : "Inga roller"}</td>
+                  <td>
+                    <button onClick={() => handleEditUserRole(user.id)}>
+                      Ändra roll
+                    </button>
+                    <button onClick={() => handleDeleteUser(user.id)}>
+                      Ta bort användare
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {selectedUserId && (
+          <div>
+            <select value={newRole} onChange={(e) => setNewRole(e.target.value)}>
+              <option value="user">Användare</option>
+              <option value="admin">Admin</option>
+            </select>
+            <button onClick={handleUpdateUserRole}>Spara roll</button>
+          </div>
+        )}
+        <h4>Inbjudna Användare</h4>
         <table>
           <thead>
             <tr>
-              <th>Användarnamn</th>
               <th>E-post</th>
-              <th>Roll</th>
-              <th>Åtgärd</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.roles ? user.roles.join(", ") : "Inga roller"}</td>
-                <td>
-                  <button onClick={() => handleEditUserRole(user.id)}>
-                    Ändra roll
-                  </button>
-                  <button onClick={() => handleDeleteUser(user.id)}>
-                    Ta bort användare
-                  </button>
-                </td>
+            {invitedUsers.map((invitedUser) => (
+              <tr key={invitedUser.id}>
+                <td>{invitedUser.email}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {selectedUserId && (
-        <div>
-          <select value={newRole} onChange={(e) => setNewRole(e.target.value)}>
-            <option value="user">Användare</option>
-            <option value="admin">Admin</option>
-          </select>
-          <button onClick={handleUpdateUserRole}>Spara roll</button>
-        </div>
-      )}
-      <h4>Inbjudna Användare</h4>
-      <table>
-        <thead>
-          <tr>
-            <th>E-post</th>
-            {/* ... (eventuellt andra kolumner för inbjudna användare) */}
-          </tr>
-        </thead>
-        <tbody>
-          {invitedUsers.map((invitedUser) => (
-            <tr key={invitedUser.id}>
-              <td>{invitedUser.email}</td>
-              {/* ... (eventuellt andra kolumner för inbjudna användare) */}
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };

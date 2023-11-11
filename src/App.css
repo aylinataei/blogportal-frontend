@@ -4,5 +4,10 @@
   align-items: center;
   width: 100%;
   margin: 0;
-  background-color: #f4f4f4;
+  background-color: #dfd3c8;
+  font-family: 'Poppins', sans-serif;
+}
+
+* {
+  font-family: 'Poppins', sans-serif;
 }

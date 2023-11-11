@@ -1,9 +1,9 @@
-// loginScreen.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../authContext';
 import './loginScreen.css';
+import Cookies from 'js-cookie';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
@@ -19,7 +19,13 @@ const LoginScreen = () => {
       });
 
       const userData = response.data;
+
+      // Spara i cookie
+      Cookies.set('accessToken', userData.accessToken);
+
+      // Spara också i localStorage som en backup
       localStorage.setItem('accessToken', userData.accessToken);
+
       login(userData);
       console.log(userData);
 
