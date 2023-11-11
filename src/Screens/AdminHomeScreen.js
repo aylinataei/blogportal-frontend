@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./adminHomeScreen.css";
+import LogoutButton from "./logout.js";
 
 
 const AdminHomeScreen = () => {
@@ -142,6 +143,7 @@ const AdminHomeScreen = () => {
 
   return (
     <div className="container">
+      <LogoutButton />
       <h1>Admin Home Screen</h1>
       <div className="container-register">
         <input
