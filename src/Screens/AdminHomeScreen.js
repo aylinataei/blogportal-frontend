@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./adminHomeScreen.css";
 import LogoutButton from "./logout.js";
-import { FaPen, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 
 const AdminHomeScreen = () => {
   const [email, setEmail] = useState("");
@@ -19,13 +19,20 @@ const AdminHomeScreen = () => {
 
   const handleInvite = async () => {
     try {
-      await axios.post("http://localhost:8080/api/auth/inviteUser", {
-        email,
-        selectedRole,
-      });
+      const token = localStorage.getItem("accessToken");
+      await axios.post(
+        "http://localhost:8080/api/auth/inviteUser",
+        {
+          email,
+        },
+        {
+          headers: {
+            "x-access-token": token,
+          },
+        }
+      );
 
       setInvitedUsers([...invitedUsers, { email, id: Date.now() }]);
-
       setInviteSuccess(true);
       setEmail("");
     } catch (error) {
@@ -149,15 +156,18 @@ const AdminHomeScreen = () => {
   useEffect(() => {
     getPosts();
     axios
-      .get("http://localhost:8080/api/users")
+      .get("http://localhost:8080/api/users", {
+        headers: {
+          "x-access-token": localStorage.getItem("accessToken"),
+        },
+      })
       .then((response) => {
         setUsers(response.data);
       })
       .catch((error) => {
-        console.error("Något gick fel vid hämtning av användare:", error);
+        console.error("An error occurred while fetching users:", error);
       });
   }, []);
-
 
   return (
     <div className="container">

@@ -21,7 +21,7 @@ const LoginScreen = () => {
       const userData = response.data;
 
       // Spara i cookie
-      Cookies.set('accessToken', userData.accessToken);
+      Cookies.set('accessToken', userData.accessToken, { secure: true, httpOnly: true });
 
       // Spara också i localStorage som en backup
       localStorage.setItem('accessToken', userData.accessToken);
