@@ -10,6 +10,8 @@ import PasswordResetPage from './screens/passwordResetPage';
 import UserHomeScreen from './screens/userHomeScreen';
 import ProtectedRoute from './screens/privateRoute';
 import { AuthProvider } from './authContext';
+import CheckTokenExpiration from './checkTokenExpiration';
+
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
@@ -42,6 +44,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/set-password" element={<PasswordResetPage />} />
         </Routes>
       </Router>
+      <CheckTokenExpiration />
     </AuthProvider>
   </React.StrictMode>,
 );
