@@ -17,6 +17,20 @@ const AdminHomeScreen = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [invitedUsers, setInvitedUsers] = useState([]);
 
+  const getInvitedUsers = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get("http://localhost:8080/api/invitedUsers", {
+        headers: {
+          "x-access-token": token,
+        },
+      });
+      setInvitedUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching invited users:", error);
+    }
+  };
+
   const handleInvite = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -32,13 +46,15 @@ const AdminHomeScreen = () => {
         }
       );
 
-      setInvitedUsers([...invitedUsers, { email, id: Date.now() }]);
-      setInviteSuccess(true);
+      getInvitedUsers();
+
       setEmail("");
     } catch (error) {
       console.error("Något gick fel vid skickandet av inbjudan:", error);
     }
   };
+
+
 
   const handleRoleChange = (event) => {
     setSelectedRole(event.target.value);
@@ -154,6 +170,7 @@ const AdminHomeScreen = () => {
   };
 
   useEffect(() => {
+    getInvitedUsers();
     getPosts();
     axios
       .get("http://localhost:8080/api/users", {
