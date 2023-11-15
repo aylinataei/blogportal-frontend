@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./adminHomeScreen.css";
 import LogoutButton from "./logout.js";
-import { FaTrash } from "react-icons/fa";
+import { FaPen, FaTrash } from "react-icons/fa";
+
 
 const AdminHomeScreen = () => {
   const [email, setEmail] = useState("");
-  const [selectedRole, setSelectedRole] = useState("");
   const [newRole, setNewRole] = useState("");
-  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [posts, setPosts] = useState([]);
   const [inviteSuccess, setInviteSuccess] = useState(false);
@@ -16,15 +15,21 @@ const AdminHomeScreen = () => {
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [invitedUsers, setInvitedUsers] = useState([]);
+  const [editingPostId, setEditingPostId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editContent, setEditContent] = useState("");
 
   const getInvitedUsers = async () => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get("http://localhost:8080/api/invitedUsers", {
-        headers: {
-          "x-access-token": token,
-        },
-      });
+      const response = await axios.get(
+        "http://localhost:8080/api/invitedUsers",
+        {
+          headers: {
+            "x-access-token": token,
+          },
+        }
+      );
       setInvitedUsers(response.data);
     } catch (error) {
       console.error("Error fetching invited users:", error);
@@ -38,6 +43,7 @@ const AdminHomeScreen = () => {
         "http://localhost:8080/api/auth/inviteUser",
         {
           email,
+          selectedRole: "user",
         },
         {
           headers: {
@@ -49,17 +55,11 @@ const AdminHomeScreen = () => {
       getInvitedUsers();
 
       setEmail("");
+      setInviteSuccess(true);
     } catch (error) {
       console.error("Något gick fel vid skickandet av inbjudan:", error);
     }
   };
-
-
-
-  const handleRoleChange = (event) => {
-    setSelectedRole(event.target.value);
-  };
-
   const handleUpdateUserRole = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -80,28 +80,48 @@ const AdminHomeScreen = () => {
         return user;
       });
       setUsers(updatedUsers);
-      setSelectedUserId(null); // Nollställ vald användare
+      setSelectedUserId(null);
     } catch (error) {
-      console.error("Något gick fel vid uppdatering av användarens roll:", error);
+      console.error(
+        "Något gick fel vid uppdatering av användarens roll:",
+        error
+      );
     }
   };
 
   const handlePost = async () => {
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.post(
-        "http://localhost:8080/api/createPost",
-        {
-          title,
-          content,
-        },
-        {
-          headers: {
-            "x-access-token": token,
+
+      if (editingPostId) {
+        await axios.put(
+          `http://localhost:8080/api/updatePost/${editingPostId}`,
+          {
+            title: editTitle,
           },
-        }
-      );
-      setTitle("");
+          {
+            headers: {
+              "x-access-token": token,
+            },
+          }
+        );
+
+        setEditingPostId(null);
+        setEditTitle("");
+        setEditContent("");
+      } else {
+        await axios.post(
+          "http://localhost:8080/api/createPost",
+          {
+            content,
+          },
+          {
+            headers: {
+              "x-access-token": token,
+            },
+          }
+        );
+      }
       setContent("");
       getPosts();
     } catch (error) {
@@ -146,12 +166,9 @@ const AdminHomeScreen = () => {
     setShowInputFields(true);
   };
 
-
   const handleEditUserRole = (userId) => {
-    setSelectedUserId(userId); // Spara användarens id som har valts
+    setSelectedUserId(userId);
   };
-
-
 
   const handleDeletePost = async (postId) => {
     try {
@@ -167,6 +184,11 @@ const AdminHomeScreen = () => {
     } catch (error) {
       console.error("Något gick fel vid borttagning av inlägg:", error);
     }
+  };
+
+  const disableButton = (user) => {
+    const userId = localStorage.getItem("loggedInUserId", user.id);
+    return String(user.id) === String(userId);
   };
 
   useEffect(() => {
@@ -198,109 +220,138 @@ const AdminHomeScreen = () => {
           onChange={(e) => setEmail(e.target.value)}
         />
         <div className="container-invite">
-          <select
-            className="select-role"
-            value={selectedRole}
-            onChange={handleRoleChange}
-          >
-            <option value="user">Användare</option>
-            <option value="admin">Admin</option>
-          </select>
-
           <button className="invite-btn" onClick={handleInvite}>
             Invite
           </button>
 
           {inviteSuccess && (
-            <p style={{ color: "green" }}>
-              Inbjudan skickad framgångsrikt via e-post!
+            <p style={{ color: "green", fontSize: "10px" }}>
+              Invitation sent successfully to email!
             </p>
           )}
         </div>
         <div>
-          <button onClick={showInputFieldsHandler}>Lägg till inlägg</button>
+          <button onClick={showInputFieldsHandler}>Add post</button>
         </div>
         {showInputFields && (
-          <div>
-            <input className="content-title"
-              type="text"
-              placeholder="Titel"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <textarea className="content-field"
-              placeholder="Innehåll"
+          <div className="create-post">
+            <textarea
+              className="content-field"
+              placeholder="Content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
             ></textarea>
-            <button onClick={handlePost}>Skapa Inlägg</button>
+            <button onClick={handlePost}>
+              {editingPostId ? "Update post" : "Create post"}
+            </button>
           </div>
         )}
         <div>
           {posts.map((post) => (
             <div className="post" key={post.id}>
-              <h3>{post.title}</h3>
-              <p>{post.content}</p>
-              {/* <button
-                className="edit-post"
-                onClick={() => handleEditPost(post.title, post.content)}
-              >
-                <FaPen />
-              </button> */}
-              <button
-                className="edit-post"
-                onClick={() => handleDeletePost(post.id)}
-              >
-                <FaTrash />
-              </button>
+              {editingPostId === post.id ? (
+                <>
+                  <textarea
+                    placeholder="New content"
+                    value={editContent || post.content}
+                    onChange={(e) => setEditContent(e.target.value)}
+                  ></textarea>
+                  <button
+                    className="btn-editpost"
+                    onClick={() => handlePost(post.id)}
+                  >
+                    Update post
+                  </button>
+                  <button
+                    className="btn-editpost"
+                    onClick={() => setEditingPostId(null)}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p>{post.content}</p>
+                  <button
+                    className="edit-post"
+                    onClick={() => setEditingPostId(post.id)}
+                  >
+                    <FaPen />
+                  </button>
+                  <button
+                    className="edit-post"
+                    onClick={() => handleDeletePost(post.id)}
+                  >
+                    <FaTrash />
+                  </button>
+                </>
+              )}
             </div>
           ))}
         </div>
-        <div>
-          <h4>Användare</h4>
+        <div className="user-container">
+          <h2>Users</h2>
           <table>
             <thead>
               <tr>
-                <th>Användarnamn</th>
-                <th>E-post</th>
-                <th>Roll</th>
-                <th>Åtgärd</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.username}</td>
-                  <td>{user.email}</td>
-                  <td>{user.roles ? user.roles.join(", ") : "Inga roller"}</td>
-                  <td>
-                    <button onClick={() => handleEditUserRole(user.id)}>
-                      Ändra roll
-                    </button>
-                    <button onClick={() => handleDeleteUser(user.id)}>
-                      Ta bort användare
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {users.map((user) => {
+                return (
+                  <tr key={user.id}>
+                    <td>{user.username}</td>
+                    <td>{user.email}</td>
+                    <td>{user.roles}</td>
+                    <td>
+                      <button
+                        className="button-user"
+                        onClick={() => handleEditUserRole(user.id)}
+                        disabled={
+                          user.email === "admin@admin.com" ||
+                          disableButton(user)
+                        }
+                      >
+                        <FaPen />
+                      </button>
+                      <button
+                        className="button-user"
+                        disabled={
+                          user.email === "admin@admin.com" ||
+                          disableButton(user)
+                        }
+                        onClick={() => handleDeleteUser(user.id)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
         {selectedUserId && (
           <div>
-            <select value={newRole} onChange={(e) => setNewRole(e.target.value)}>
-              <option value="user">Användare</option>
+            <select
+              className="select-role"
+              value={newRole}
+              onChange={(e) => setNewRole(e.target.value)}
+            >
+              <option value="">Select</option>
+              <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
-            <button onClick={handleUpdateUserRole}>Spara roll</button>
+            <button onClick={handleUpdateUserRole}>Save</button>
           </div>
         )}
-        <h4>Inbjudna Användare</h4>
+        <h5>Invited users</h5>
         <table>
           <thead>
-            <tr>
-              <th>E-post</th>
-            </tr>
+            <tr></tr>
           </thead>
           <tbody>
             {invitedUsers.map((invitedUser) => (
@@ -316,8 +367,3 @@ const AdminHomeScreen = () => {
 };
 
 export default AdminHomeScreen;
-
-
-
-
-

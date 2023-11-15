@@ -1,10 +1,14 @@
-// AuthContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const storedUser = JSON.parse(localStorage.getItem("user")) || null;
+  const [user, setUser] = useState(storedUser);
+
+  useEffect(() => {
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
 
   const login = (userData) => {
     setUser(userData);
@@ -12,6 +16,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
+    localStorage.clear();
   };
 
   return (

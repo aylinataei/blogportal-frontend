@@ -1,43 +1,43 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../authContext';
-import './loginScreen.css';
-import Cookies from 'js-cookie';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./loginScreen.css";
+import { useAuth } from "../authContext";
 
 const LoginScreen = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/signin', {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/signin",
+        {
+          username,
+          password,
+        }
+      );
 
-      const userData = response.data;
+      const user = response.data;
+      localStorage.setItem("accessToken", user.accessToken);
+      localStorage.setItem("loggedInUserId", user.id);
 
-      // Spara i cookie
-      Cookies.set('accessToken', userData.accessToken, { secure: true, httpOnly: true });
+      login(user);
 
-      // Spara också i localStorage som en backup
-      localStorage.setItem('accessToken', userData.accessToken);
-
-      login(userData);
-      console.log(userData);
-
-      if (userData.roles.includes('ROLE_ADMIN')) {
-        navigate('/AdminHome');
+      if (user.roles.includes("ROLE_ADMIN")) {
+        navigate("/AdminHome");
       } else {
-        navigate('/UserHome');
+        navigate("/UserHome");
       }
     } catch (error) {
-      console.error('Inloggning misslyckades:', error);
+      console.error("Inloggning misslyckades:", error.response.data.message);
+      setError("Fel användarnamn eller lösenord. Försök igen.");
     }
   };
+
 
   return (
     <div className="container">
@@ -57,6 +57,7 @@ const LoginScreen = () => {
         />
       </div>
       <button onClick={handleLogin}>Logga in</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 };

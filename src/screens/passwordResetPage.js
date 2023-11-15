@@ -7,7 +7,7 @@ const CreateUserWithPassword = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [createSuccess, setCreateSuccess] = useState(false);
-  const [jwtToken, setJwtToken] = useState("");
+  const [setJwtToken] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   const myUrl = new URL(window.location.toLocaleString()).searchParams;
@@ -46,6 +46,17 @@ const CreateUserWithPassword = () => {
           token: invitationToken,
           username: username,
           password: password,
+        });
+
+        const token = localStorage.getItem("accessToken");
+        await axios.delete("http://localhost:8080/api/removeInvitedUser", {
+          data:
+          {
+            token: invitationToken,
+          },
+          headers: {
+            "x-access-token": token,
+          },
         });
 
         const newJwtToken = response.data.token;

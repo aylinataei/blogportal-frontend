@@ -128,3 +128,26 @@ ul {
 .edit-post:hover {
   background-color: white;
 }
+.button-user {
+  font-size: 10px;
+  padding: 4px;
+  margin: 5px;
+}
+
+.button-user:disabled {
+  background-color: gray;
+}
+.btn-editpost {
+  font-size: 10px;
+  margin-right: 1rem;
+  margin-top: 0;
+}
+
+
+.create-post {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50vw;
+}

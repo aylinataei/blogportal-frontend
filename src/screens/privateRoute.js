@@ -1,9 +1,13 @@
-// ProtectedRoute.js
-import React from 'react';
-import { Navigate, Route } from 'react-router-dom';
-import { useAuth } from '../authContext';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../authContext";
 
-const ProtectedRoute = ({ isAllowed, redirectPath = '/', children, ...rest }) => {
+const ProtectedRoute = ({
+  isAllowed,
+  redirectPath = "/",
+  children,
+  ...rest
+}) => {
   const { user } = useAuth();
 
   if (!isAllowed(user)) {

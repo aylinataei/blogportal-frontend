@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import LogoutButton from "./logout";
 
 const UserHomeScreen = () => {
   const [posts, setPosts] = useState([]);
@@ -27,6 +28,7 @@ const UserHomeScreen = () => {
 
   return (
     <div>
+      <LogoutButton />
       <h1>User Home Screen</h1>
       <div>
         {posts.map((post) => (
